@@ -1,0 +1,44 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.TeamSelection {
+  background-image: url(../public/basketballcourt.png);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.editButton {
+  background-image: url(../public/images/editbutton.svg);
+  background-position: center;
+  background-repeat: no-repeat;
+  height: 100%;
+  width: 100%;
+}
+.deleteButton {
+  background-image: url(../public/images/trashcan.svg);
+  background-position: center;
+  background-repeat: no-repeat;
+  height: 100%;
+  width: 100%;
+}
+
+.overlay {
+  position: absolute;
+  top: 0%;
+  left: 0%;
+  background-color: rgba(0, 0, 0, 0.6);
+  height: 100svh;
+  width: 100vw;
+}
+
+.modal {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  height: 95vh;
+  width: 40vw;
+}

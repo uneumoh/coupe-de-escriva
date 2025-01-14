@@ -1,0 +1,43 @@
+"use client";
+import Container from "@/components/Container";
+import Header from "@/components/header";
+import { useRouter } from "next/navigation";
+import React from "react";
+
+const Games = () => {
+  const router = useRouter();
+
+  const handleNavigation = (path: string) => {
+    if (router) {
+      router.push(path);
+    } else {
+      console.error("Router is not availiable");
+    }
+  };
+  return (
+    <div className="flex h-screen w-screen flex-col">
+      <Header />
+      <Container
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <div className="flex h-[50%] w-full flex-col items-center justify-evenly rounded-[20px] bg-[#0F0050] font-bold">
+          <div
+            className="flex h-[15%] w-[90%] cursor-pointer flex-row items-center justify-center bg-[#FFC521]"
+            onClick={() => handleNavigation("/admin/games/newgame")}
+          >
+            <p>New Game</p>
+          </div>
+          <div className="flex h-[15%] w-[90%] cursor-pointer flex-row items-center justify-center bg-[#FFC521]">
+            <p>View Games</p>
+          </div>
+        </div>
+      </Container>
+    </div>
+  );
+};
+
+export default Games;
