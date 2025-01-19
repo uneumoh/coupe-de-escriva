@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction } from "react";
+import React, { Dispatch, SetStateAction, FormEvent } from "react";
 import firebase from "@/firebase/clientApp";
 import {
   getFirestore,
@@ -10,13 +10,25 @@ import {
 
 const db = getFirestore(firebase);
 
+interface Player {
+  firstname: string;
+  lastname: string;
+  number: string;
+  position: string;
+  level: string;
+  department: string;
+  team: string;
+  username: string;
+  jersey: string;
+}
+
 interface NewGameFormProps {
   team1: string;
   setTeam1: Dispatch<SetStateAction<string>>;
   team2: string;
   setTeam2: Dispatch<SetStateAction<string>>;
-  setTeam1Players: Dispatch<SetStateAction<string[]>>;
-  setTeam2Players: Dispatch<SetStateAction<string[]>>;
+  setTeam1Players: Dispatch<SetStateAction<Player[]>>;
+  setTeam2Players: Dispatch<SetStateAction<Player[]>>;
   setIsTeamsSelected: Dispatch<SetStateAction<boolean>>;
   setIsTeam1Selection: Dispatch<SetStateAction<boolean>>;
 }
@@ -40,13 +52,13 @@ const NewGameForm = ({
       const players = snapshot.docs.map((doc) => ({
         ...doc.data(),
       }));
-      const result = players.map((person) => person.firstname);
+      const result = players as Player[];
 
       return result;
     } else return [];
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (!team1 || !team2) {
       alert("Teams cannot be empty");

@@ -1,4 +1,5 @@
 import React, { FormEvent, Dispatch, SetStateAction, useEffect } from "react";
+import Container from "../Container";
 
 interface GameSettingsType {
   gametype: string;
@@ -23,6 +24,7 @@ const GameSettings = ({
   setGamesSettings,
 }: Props) => {
   const handleGameSettingsSubmit = (e: FormEvent) => {
+    e.preventDefault();
     if (
       gameSettings.gametype === "" ||
       gameSettings.foullimit === "" ||
@@ -42,14 +44,23 @@ const GameSettings = ({
   }, [gameSettings]);
 
   return (
-    <div className="m-[5vh] flex min-h-[75vh] flex-1 flex-col rounded-[20px] bg-[#0F0050] pb-[4vh]">
+    <Container
+      style={{
+        backgroundColor: "#0F0051",
+        borderRadius: 10,
+        padding: 0,
+        margin: 0,
+        height: "100%",
+        width: "100%",
+      }}
+    >
       <form
-        className="mt-[5vh] flex h-full w-full flex-col"
+        className="flex h-full w-full flex-col"
         onSubmit={(e) => handleGameSettingsSubmit(e)}
       >
         {/* Game Type */}
-        <div className="flex h-[90%] flex-col gap-[2.6vh]">
-          <div className="flex h-[6.5vh] flex-row items-center">
+        <div className="flex h-[75%] flex-col justify-evenly text-[12px]">
+          <div className="flex h-[10%] flex-row items-center">
             <div className="flex h-full w-[20%] flex-row items-center justify-center">
               <label htmlFor="GameType" className="font-bold text-white">
                 GameType:
@@ -58,7 +69,7 @@ const GameSettings = ({
             <div className="flex h-full w-[80%] flex-row items-center p-[2%]">
               <select
                 name="GameType"
-                className="h-[6.5vh] w-full rounded-[10px]"
+                className="h-full w-full rounded-[10px]"
                 value={gameSettings.gametype}
                 onChange={(e) =>
                   setGamesSettings({
@@ -75,7 +86,7 @@ const GameSettings = ({
             </div>
           </div>
           {/* Foul Limit */}
-          <div className="flex h-[6.5vh] flex-row items-center">
+          <div className="flex h-[10%] flex-row items-center">
             <div className="flex h-full w-[20%] flex-row items-center justify-center">
               <label htmlFor="FoulLimit" className="font-bold text-white">
                 Foul Limit:
@@ -94,12 +105,12 @@ const GameSettings = ({
                   })
                 }
                 name="FoulLimit"
-                className="h-[6.5vh] w-full rounded-[10px]"
+                className="h-full w-full rounded-[10px]"
               />
             </div>
           </div>
           {/* Timeouts First Half */}
-          <div className="flex h-[6.5vh] flex-row items-center">
+          <div className="flex h-[10%] flex-row items-center">
             <div className="flex h-full w-[20%] flex-row items-center justify-center">
               <label htmlFor="TimeFirstHalf" className="font-bold text-white">
                 Timeouts First Half:
@@ -111,7 +122,7 @@ const GameSettings = ({
                 min={1}
                 max={3}
                 name="TimeFirstHalf"
-                className="h-[6.5vh] w-full rounded-[10px]"
+                className="h-full w-full rounded-[10px]"
                 value={gameSettings.timeoutsfirsthalf}
                 onChange={(e) =>
                   setGamesSettings({
@@ -123,7 +134,7 @@ const GameSettings = ({
             </div>
           </div>
           {/* Timeouts Second Half */}
-          <div className="flex h-[6.5vh] flex-row items-center">
+          <div className="flex h-[10%] flex-row items-center">
             <div className="flex h-full w-[20%] flex-row items-center justify-center">
               <label htmlFor="TimeSecondHalf" className="font-bold text-white">
                 Timeouts Second Half:
@@ -135,7 +146,7 @@ const GameSettings = ({
                 min={1}
                 max={4}
                 name="TimeSecondHalf"
-                className="h-[6.5vh] w-full rounded-[10px]"
+                className="h-full w-full rounded-[10px]"
                 value={gameSettings.timeoutssecondhalf}
                 onChange={(e) =>
                   setGamesSettings({
@@ -147,30 +158,26 @@ const GameSettings = ({
             </div>
           </div>
         </div>
-        <div className="flex h-[10%] w-[100%] flex-row items-end justify-between pl-[22%] pr-[2%]">
-          <div className="h-[8vh]">
-            <button
-              className="h-full w-[18vw] rounded-[10px] bg-yellow-500 text-[24px] font-bold text-white"
-              type="submit"
-            >
-              Submit
-            </button>
-          </div>
-          <div className="h-[8vh]">
-            <button
-              className="h-full w-[18vw] rounded-[10px] bg-red-500 text-[24px] font-bold text-white"
-              type="button"
-              onClick={() => {
-                setSelectGameSettings(false);
-                setIsTeam2Selection(true);
-              }}
-            >
-              Back
-            </button>
-          </div>
+        <div className="flex h-[10%] w-full flex-row items-end justify-evenly">
+          <button
+            className="h-full w-[40%] rounded-[10px] bg-yellow-500 text-[24px] font-bold text-white"
+            type="submit"
+          >
+            Submit
+          </button>
+          <button
+            className="h-full w-[40%] rounded-[10px] bg-red-500 text-[24px] font-bold text-white"
+            type="button"
+            onClick={() => {
+              setSelectGameSettings(false);
+              setIsTeam2Selection(true);
+            }}
+          >
+            Back
+          </button>
         </div>
       </form>
-    </div>
+    </Container>
   );
 };
 

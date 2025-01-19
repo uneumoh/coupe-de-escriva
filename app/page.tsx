@@ -12,7 +12,7 @@ export default function Home() {
   return (
     <div className="flex h-screen w-screen flex-col">
       <Header />
-      <Container>
+      <Container style={{ padding: "10%" }}>
         <LiveGameBar />
         <MVP />
       </Container>

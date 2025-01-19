@@ -49,10 +49,10 @@ const NewGame = () => {
   const [isTeam2Selection, setIsTeam2Selection] = useState(false);
 
   // array of all players in the team for starting selection
-  const [team1players, setTeam1Players] = useState<string[]>([]);
-  const [team2players, setTeam2Players] = useState<string[]>([]);
-  const [onFieldTeam1, setOnfieldTeam1] = useState<string[]>([]);
-  const [onFieldTeam2, setOnfieldTeam2] = useState<string[]>([]);
+  const [team1players, setTeam1Players] = useState<Player[]>([]);
+  const [team2players, setTeam2Players] = useState<Player[]>([]);
+  const [onFieldTeam1, setOnfieldTeam1] = useState<Player[]>([]);
+  const [onFieldTeam2, setOnfieldTeam2] = useState<Player[]>([]);
 
   //Game Settings useState
   const [gameSettings, setGameSettings] = useState<GameSettingsType>({
