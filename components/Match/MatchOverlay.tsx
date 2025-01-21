@@ -1,27 +1,6 @@
 import React, { Dispatch, SetStateAction } from "react";
 import StatButton from "./StatButton";
-
-interface Player {
-  firstname: string;
-  lastname: string;
-  number: string;
-  position: string;
-  level: string;
-  department: string;
-  team: string;
-  username: string;
-  jersey: string;
-}
-
-interface PlayerStatsType {
-  username: string;
-  points: number;
-  assists: number;
-  rebounds: number;
-  steals: number;
-  blocks: number;
-  fouls: number;
-}
+import { Player, PlayerStatsType } from "@/app/types/match";
 
 interface Props {
   player: Player | null;
