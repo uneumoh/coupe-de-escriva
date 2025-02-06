@@ -17,9 +17,15 @@ import Image from "next/image";
 import editButton from "../public/images/editbutton.svg";
 import deleteButton from "../public/images/trashcan.svg";
 import closeButton from "../public/images/close-button.svg";
+import { Roboto_Condensed } from "next/font/google";
 
 const db = getFirestore(firebase);
 const colRef = collection(db, "basketballplayers");
+
+const roboto = Roboto_Condensed({
+  subsets: ["latin"],
+  weight: ["400", "700"],
+});
 
 const validLevels = ["100", "200", "300", "400", "500"];
 const validTeams = ["Bluejays", "Cirok", "Madiba", "TSG"];
@@ -307,7 +313,7 @@ const AdminPlayerTable = () => {
     }));
   };
   return (
-    <div className="flex flex-1 flex-col px-[9vh] pt-[9vh]">
+    <div className="flex h-full w-full flex-col px-[5%] pt-[5%]">
       {/* Create Player */}
       {createPlayerModal && (
         <>
@@ -632,69 +638,69 @@ const AdminPlayerTable = () => {
         </>
       )}
 
-      <div className="flex h-[5vh] w-full flex-row bg-white">
+      <div className="flex h-[40%] w-full flex-col justify-between bg-white md:h-[8%] md:flex-row">
         <input
           value={select.name}
           name="name"
           onChange={(e) => handleInputChange(e)}
-          className="h-[5vh] w-[27vw] rounded border border-black bg-[#D9D9D9]"
+          className="h-[20%] w-full rounded border border-black bg-[#D9D9D9]"
           placeholder="Search player by name"
         />
-        <div>
-          <select
-            value={select.team}
-            name="team"
-            onChange={(e) => {
-              handleInputChange(e);
-            }}
-            className="ml-[5vw] h-full w-[12vw] rounded border border-black bg-[#D9D9D9]"
-          >
-            <option value="">Select Team</option>
-            <option value="Madiba">Madiba</option>
-            <option value="Bluejays">Bluejays</option>
-            <option value="Cirok">Cirok</option>
-            <option value="TSG">TSG</option>
-          </select>
 
-          <select
-            value={select.level}
-            name="level"
-            onChange={(e) => {
-              handleInputChange(e);
-            }}
-            className="ml-[5vw] h-full w-[12vw] rounded border border-black bg-[#D9D9D9]"
-          >
-            <option value="">Select Level</option>
-            <option value="100">100</option>
-            <option value="200">200</option>
-            <option value="300">300</option>
-            <option value="400">400</option>
-          </select>
+        <select
+          value={select.team}
+          name="team"
+          onChange={(e) => {
+            handleInputChange(e);
+          }}
+          className="h-[20%] w-full rounded border border-black bg-[#D9D9D9]"
+        >
+          <option value="">Select Team</option>
+          <option value="Madiba">Madiba</option>
+          <option value="Bluejays">Bluejays</option>
+          <option value="Cirok">Cirok</option>
+          <option value="TSG">TSG</option>
+        </select>
 
-          <select
-            value={select.department}
-            name="department"
-            onChange={(e) => {
-              handleInputChange(e);
-            }}
-            className="ml-[5vw] h-full w-[12vw] rounded border border-black bg-[#D9D9D9]"
-          >
-            <option value="">Select Department</option>
-            <option value="Comp Sci.">Comp Sci.</option>
-            <option value="MEE">MEE</option>
-            <option value="EE">EE</option>
-            <option value="Software Eng.">Software Eng.</option>
-            <option value="Finance">Finance</option>
-            <option value="Biz Ad">Biz Ad</option>
-            <option value="Econs">Econs</option>
-            <option value="ISMS">ISMS</option>
-            <option value="Mass Comm.">Mass Comm.</option>
-            <option value="Mechatronics">Mechatronics</option>
-            <option value="Accounting">Accounting</option>
-          </select>
-        </div>
+        <select
+          value={select.level}
+          name="level"
+          onChange={(e) => {
+            handleInputChange(e);
+          }}
+          className="h-[20%] w-full rounded border border-black bg-[#D9D9D9]"
+        >
+          <option value="">Select Level</option>
+          <option value="100">100</option>
+          <option value="200">200</option>
+          <option value="300">300</option>
+          <option value="400">400</option>
+        </select>
+
+        <select
+          value={select.department}
+          name="department"
+          onChange={(e) => {
+            handleInputChange(e);
+          }}
+          className="h-[20%] w-full rounded border border-black bg-[#D9D9D9]"
+        >
+          <option value="">Select Department</option>
+          <option value="Comp Sci.">Comp Sci.</option>
+          <option value="MEE">MEE</option>
+          <option value="EE">EE</option>
+          <option value="Software Eng.">Software Eng.</option>
+          <option value="Finance">Finance</option>
+          <option value="Biz Ad">Biz Ad</option>
+          <option value="Econs">Econs</option>
+          <option value="ISMS">ISMS</option>
+          <option value="Mass Comm.">Mass Comm.</option>
+          <option value="Mechatronics">Mechatronics</option>
+          <option value="Accounting">Accounting</option>
+        </select>
+
         <div
-          className="mx-[2vw] flex h-full w-[7vw] items-center justify-center bg-[#0F0050] hover:cursor-pointer"
+          className="flex h-[10%] items-center justify-center bg-[#0F0050] hover:cursor-pointer"
           onClick={() => {
             setCreatePlayerModal(true);
             resetPlayer();
@@ -703,9 +709,20 @@ const AdminPlayerTable = () => {
           <p className="font-bold text-white">Add New</p>
         </div>
       </div>
-      <div className="mt-[5vh] h-[60vh] w-full overflow-scroll bg-[#0F0050]">
+      <div className="mt-[10%] h-[60%] w-full overflow-scroll bg-[#0F0050] md:mt-[5%]">
         <table className="w-full border-collapse border border-black">
-          <tbody className="border-collapse border-black bg-white">
+          <thead>
+            <tr className={`bg-[#FFC521] text-[12px] ${roboto.className}`}>
+              <th>Player</th>
+              <th>Player</th>
+              <th>Team</th>
+              <th>Level</th>
+              <th>Department</th>
+              <th>Edit</th>
+              <th>Delete</th>
+            </tr>
+          </thead>
+          <tbody className="border-collapse border-black bg-white text-[12px]">
             {filteredPlayers.map((player) => (
               <tr key={player.username} className="h-[5vh] border border-black">
                 <td className="w-[10%]">

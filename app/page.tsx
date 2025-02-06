@@ -1,7 +1,4 @@
 import React from "react";
-import HomeScreenPlayerNumber from "@/components/Homepage/homescreenplayernumber";
-import Image from "next/image";
-import Navbar from "@/components/Navigation/navbar";
 import Header from "@/components/header";
 import BottomNavBar from "@/components/Navigation/BottomNavBar";
 import LiveGameBar from "@/components/Homepage/LiveGameBar";

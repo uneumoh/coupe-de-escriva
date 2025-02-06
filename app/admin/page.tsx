@@ -14,9 +14,9 @@ const AdminPage = () => {
     }
   };
   return (
-    <div className="flex flex-col">
+    <div className="flex h-screen w-screen flex-col">
       <Header />
-      <div className="h-[85vh] w-[100vw]">
+      <div className="h-[90%] w-[100vw]">
         <div className="grid h-full w-full grid-cols-2 grid-rows-2">
           <div
             className="flex cursor-pointer items-center justify-center bg-[#0F0050] hover:bg-[#FFC521]"

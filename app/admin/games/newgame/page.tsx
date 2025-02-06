@@ -30,16 +30,8 @@ interface GameSettingsType {
 }
 
 const NewGame = () => {
-  const [points, setPoints] = useState(0);
-  const [assists, setAssists] = useState(0);
-  const [rebounds, setRebounds] = useState(0);
-  const [blocks, setBlocks] = useState(0);
-  const [steals, setSteals] = useState(0);
-  const [played, setPlayed] = useState(false);
-
   const [selectGameSettings, setSelectGameSettings] = useState(false);
   const [startMatch, setStartMatch] = useState(false);
-  const [startSelection, setStartSelection] = useState(false);
 
   const [team1, setTeam1] = useState("");
   const [team2, setTeam2] = useState("");

@@ -22,6 +22,8 @@ const Games = () => {
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
+          paddingLeft: "5%",
+          paddingRight: "5%",
         }}
       >
         <div className="flex h-[50%] w-full flex-col items-center justify-evenly rounded-[20px] bg-[#0F0050] font-bold">

@@ -42,3 +42,14 @@
   height: 95vh;
   width: 40vw;
 }
+
+.playerTable td {
+  border: 1px solid #e5e7eb;
+}
+
+.CoupeLogo {
+  background-image: url("../public/Logos/coupe.png");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+}
