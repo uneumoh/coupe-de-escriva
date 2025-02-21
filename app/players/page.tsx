@@ -1,4 +1,4 @@
-import Header from "@/components/header";
+import Header from "@/components/Headers/header";
 import Navbar from "@/components/Navigation/navbar";
 import PlayerTable from "@/components/Players/playertable";
 import React from "react";

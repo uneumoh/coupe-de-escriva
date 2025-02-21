@@ -1,8 +1,8 @@
 "use client";
 import React from "react";
-import AdminPlayerTable from "@/components/adminplayertable";
+import AdminPlayerTable from "@/components/AdminPlayers/adminplayertable";
 import { useRouter } from "next/navigation";
-import Header from "@/components/header";
+import Header from "@/components/Headers/header";
 
 const AdminPlayers = () => {
   const router = useRouter();

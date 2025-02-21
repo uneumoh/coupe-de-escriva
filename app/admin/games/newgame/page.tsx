@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 
 import Match from "@/components/Match/match";
-import Header from "@/components/header";
+import Header from "@/components/Headers/header";
 import GameSettings from "@/components/NewGame/gamesettings";
 import Team2Selection from "@/components/NewGame/team2selection";
 import Team1Selection from "@/components/NewGame/team1selection";

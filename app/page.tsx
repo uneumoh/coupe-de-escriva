@@ -1,5 +1,5 @@
 import React from "react";
-import Header from "@/components/header";
+import Header from "@/components/Headers/header";
 import BottomNavBar from "@/components/Navigation/BottomNavBar";
 import LiveGameBar from "@/components/Homepage/LiveGameBar";
 import MVP from "@/components/Homepage/MVP";

@@ -4,6 +4,7 @@ import firebase from "@/firebase/clientApp";
 import { Firestore, getDocs, getFirestore } from "firebase/firestore";
 import { collection } from "firebase/firestore";
 import { Roboto_Condensed } from "next/font/google";
+import { useRouter } from "next/navigation";
 
 const db = getFirestore(firebase);
 
@@ -29,6 +30,8 @@ const PlayerTable = () => {
   const [level, setLevel] = useState("");
   const [department, setDepartment] = useState("");
   const [players, setPlayers] = useState<PlayerType[]>([]);
+
+  const router = useRouter();
 
   useEffect(() => {
     getTable();
@@ -121,7 +124,10 @@ const PlayerTable = () => {
             {players.map((player) => (
               <tr key={player.username} className="">
                 <td className="w-[35%]">
-                  <p className="text-[#0268d6]">
+                  <p
+                    className="text-[#0268d6]"
+                    onClick={() => router.push(`/players/${player.username}`)}
+                  >
                     {player.firstname} {player.lastname}
                   </p>
                 </td>

@@ -96,7 +96,7 @@ const createplayers = () => {
   };
 
   return (
-    <div className="flex h-screen w-screen flex-col bg-white">
+    <div className="flex h-full w-full flex-col bg-white">
       <div className="flex w-full flex-col items-center">
         <div className="flex w-full flex-row">
           {/* First Name */}

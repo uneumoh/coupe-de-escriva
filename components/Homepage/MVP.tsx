@@ -11,6 +11,7 @@ import {
   getDocs,
   doc,
   getDoc,
+  onSnapshot,
 } from "firebase/firestore";
 import firebase from "@/firebase/clientApp";
 
@@ -57,82 +58,87 @@ const MVP = () => {
     }
   };
 
-  const getMVP = async () => {
+  const getMVP = () => {
     try {
       const gamesQuery = query(
         collection(db, "games"),
         orderBy("Date", "desc"),
         limit(1),
       );
-      const gamesDocs = await getDocs(gamesQuery);
 
-      if (gamesDocs.docs.length > 0) {
-        const lastGame = gamesDocs.docs[0];
-        const gameId = lastGame.id;
+      const unsubscribeGames = onSnapshot(gamesQuery, (gamesSnapshot) => {
+        if (!gamesSnapshot.empty) {
+          const lastGame = gamesSnapshot.docs[0];
+          const gameId = lastGame.id;
 
-        const statsQuery = query(collection(db, `games/${gameId}/stats`));
-        const statsDocs = await getDocs(statsQuery);
+          const statsQuery = query(collection(db, `games/${gameId}/stats`));
 
-        let topPlayer: topPlayer = {
-          id: "",
-          points: 0,
-          rebounds: 0,
-          assists: 0,
-          steals: 0,
-          blocks: 0,
-          performanceScore: 0,
-        };
-        let maxScore = -1;
-
-        statsDocs.forEach((doc) => {
-          const data = doc.data(); // Explicitly cast the type
-
-          const performanceScore =
-            (data.points || 0) * 5 +
-            (data.assists || 0) * 3 +
-            (data.rebounds || 0) * 2 +
-            (data.steals || 0) * 4 +
-            (data.blocks || 0) * 4;
-
-          if (performanceScore > maxScore) {
-            maxScore = performanceScore;
-            topPlayer = {
-              id: doc.id,
-              points: data.points || 0,
-              assists: data.assists || 0,
-              rebounds: data.rebounds || 0,
-              steals: data.steals || 0,
-              blocks: data.blocks || 0,
-              performanceScore,
+          const unsubscribeStats = onSnapshot(statsQuery, (statsSnapshot) => {
+            let topPlayer = {
+              id: "",
+              points: 0,
+              rebounds: 0,
+              assists: 0,
+              steals: 0,
+              blocks: 0,
+              performanceScore: 0,
             };
-          }
-        });
+            let maxScore = -1;
 
-        if (topPlayer) {
-          console.log("MVP Player:", topPlayer);
-          setStats(topPlayer);
+            statsSnapshot.forEach((doc) => {
+              const data = doc.data();
 
-          // Fetch player info
-          console.log(stats);
-          const playerData = await getMVPInfo(topPlayer.id);
+              const performanceScore =
+                (data.points || 0) * 5 +
+                (data.assists || 0) * 3 +
+                (data.rebounds || 0) * 2 +
+                (data.steals || 0) * 4 +
+                (data.blocks || 0) * 4;
 
-          if (playerData) {
-            setPlayerInfo({
-              firstname: playerData.firstname || "Unknown",
-              lastname: playerData.lastname || "Unknown",
-              team: playerData.team || "N/A",
-              position: playerData.position || "N/A",
-              level: playerData.level || "N/A",
-              department: playerData.department || "N/A",
-              number: playerData.number || "00",
+              if (performanceScore > maxScore) {
+                maxScore = performanceScore;
+                topPlayer = {
+                  id: doc.id,
+                  points: data.points || 0,
+                  assists: data.assists || 0,
+                  rebounds: data.rebounds || 0,
+                  steals: data.steals || 0,
+                  blocks: data.blocks || 0,
+                  performanceScore,
+                };
+              }
             });
-          }
+
+            if (topPlayer.id) {
+              console.log("MVP Player:", topPlayer);
+              setStats(topPlayer);
+
+              // Fetch player info
+              getMVPInfo(topPlayer.id).then((playerData) => {
+                if (playerData) {
+                  setPlayerInfo({
+                    firstname: playerData.firstname || "Unknown",
+                    lastname: playerData.lastname || "Unknown",
+                    team: playerData.team || "N/A",
+                    position: playerData.position || "N/A",
+                    level: playerData.level || "N/A",
+                    department: playerData.department || "N/A",
+                    number: playerData.number || "00",
+                  });
+                }
+              });
+            } else {
+              console.log("No stats available for the last game.");
+            }
+          });
+
+          return () => unsubscribeStats(); // Cleanup for stats listener
         } else {
-          console.log("No stats available for the last game.");
+          console.log("No games found.");
         }
-      } else {
-        console.log("No games found.");
-      }
+      });
+
+      return () => unsubscribeGames(); // Cleanup for games listener
     } catch (error) {
       console.error("Error fetching games or stats:", error);
     }
