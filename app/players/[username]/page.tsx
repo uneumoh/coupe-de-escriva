@@ -3,13 +3,12 @@ import firebase from "@/firebase/clientApp";
 import PlayerModal from "@/components/Players/playermodal";
 
 const db = getFirestore(firebase);
-export async function generateStaticParams() {
-  const playersCollection = collection(db, "players");
-  const playersSnapshot = await getDocs(playersCollection);
-
-  return playersSnapshot.docs.map((doc) => ({
-    username: doc.id,
-  }));
+export function generateStaticParams() {
+  return getDocs(collection(db, "players")).then((playersSnapshot) =>
+    playersSnapshot.docs.map((doc) => ({
+      username: doc.id, // Ensure it's correctly formatted
+    })),
+  );
 }
 
 export default function PlayerPage({
