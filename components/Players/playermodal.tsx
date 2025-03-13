@@ -1,5 +1,4 @@
 "use client"; // Now this file can use hooks
-
 import type { Player } from "@/app/types/match";
 import firebase from "@/firebase/clientApp";
 import {

@@ -1,7 +1,8 @@
-import { collection, getDocs } from "firebase/firestore";
-import { db } from "@/firebase/serverApp"; // Ensure you are using a server instance of Firebase
-import PlayerModal from "@/components/PlayerModal"; // Import the client component
+import { collection, getDocs, getFirestore } from "firebase/firestore";
+import firebase from "@/firebase/clientApp";
+import PlayerModal from "@/components/Players/playermodal";
 
+const db = getFirestore(firebase);
 export async function generateStaticParams() {
   const playersCollection = collection(db, "players");
   const playersSnapshot = await getDocs(playersCollection);
