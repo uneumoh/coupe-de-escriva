@@ -3,18 +3,23 @@ import firebase from "@/firebase/clientApp";
 import PlayerModal from "@/components/Players/playermodal";
 
 const db = getFirestore(firebase);
-export function generateStaticParams() {
-  return getDocs(collection(db, "players")).then((playersSnapshot) =>
-    playersSnapshot.docs.map((doc) => ({
-      username: doc.id, // Ensure it's correctly formatted
-    })),
-  );
+
+export async function generateStaticParams() {
+  const playersCollection = collection(db, "players"); // Replace with your Firestore collection name
+  const playersSnapshot = await getDocs(playersCollection);
+
+  const paths = playersSnapshot.docs.map((doc) => ({
+    username: doc.id, // Assuming username is stored as the document ID
+  }));
+
+  return paths; // Next.js will pre-render these paths
 }
 
-export default function PlayerPage({
+// Make the page function async so the types match
+export default async function PlayerPage({
   params,
 }: {
-  params: { username: string };
+  params: Promise<{ username: string }>;
 }) {
-  return <PlayerModal username={params.username} />;
+  return <PlayerModal username={(await params).username} />;
 }
