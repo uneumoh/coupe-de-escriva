@@ -1,4 +1,5 @@
 import { FieldValue } from "firebase/firestore";
+import { Dispatch, SetStateAction } from "react";
 
 export interface Player {
   firstname: string;
@@ -10,6 +11,7 @@ export interface Player {
   team: string;
   username: string;
   jersey: string;
+  draftpick: string;
 }
 
 export interface GameSettingsType {
@@ -27,6 +29,8 @@ export interface Props {
   team1Players: Player[];
   team2Players: Player[];
   gameSettings: GameSettingsType;
+  setOnfieldTeam1: Dispatch<SetStateAction<Player[]>>;
+  setOnfieldTeam2: Dispatch<SetStateAction<Player[]>>;
 }
 
 export interface MatchEvents {

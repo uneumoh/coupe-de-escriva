@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import firebase from "@/firebase/clientApp";
-import { Firestore, getDocs, getFirestore } from "firebase/firestore";
+import { getDocs, getFirestore } from "firebase/firestore";
 import { collection } from "firebase/firestore";
 import { Roboto_Condensed } from "next/font/google";
 import { useRouter } from "next/navigation";
@@ -85,6 +85,7 @@ const PlayerTable = () => {
             <option value={"200"}>200</option>
             <option value={"300"}> 300</option>
             <option value={"400"}> 400</option>
+            <option value={"500"}> 500</option>
           </select>
         </div>
         <div className="h-[20%] w-full">
@@ -108,42 +109,44 @@ const PlayerTable = () => {
           </select>
         </div>
       </div>
-      <div className="mt-[10%] h-[60%] w-auto overflow-scroll bg-[#0F0050]">
-        <table className="playerTable h-full w-full overflow-scroll bg-white">
-          <thead>
-            <tr
-              className={`bg-[#FFC521] ${roboto.className} h-[30px] text-[12px] text-[#343232]`}
-            >
-              <th className="w-[35%] pl-2 text-left">Player</th>
-              <th className="w-[20%]">Team</th>
-              <th className="w-[10%]">Level</th>
-              <th className="w-[20%]">Department</th>
-            </tr>
-          </thead>
-          <tbody className="border-collapse border border-[#e5e7eb] bg-white">
-            {players.map((player) => (
-              <tr key={player.username} className="">
-                <td className="w-[35%]">
-                  <p
-                    className="text-[#0268d6]"
-                    onClick={() => router.push(`/players/${player.username}`)}
-                  >
-                    {player.firstname} {player.lastname}
-                  </p>
-                </td>
-                <td className="w-[20%]">
-                  <p>{player.team}</p>
-                </td>
-                <td className="w-[10%]">
-                  <p>{player.level}</p>
-                </td>
-                <td className="w-[20%]">
-                  <p>{player.department}</p>
-                </td>
+      <div className="mt-[10%] h-[60%] w-auto">
+        <div className="h-full w-full overflow-auto bg-white">
+          <table className="playerTable w-full border-collapse bg-white">
+            <thead className="sticky top-0 bg-[#FFC521]">
+              <tr
+                className={` ${roboto.className} h-[30px] text-[12px] text-[#343232]`}
+              >
+                <th className="w-[35%] pl-2 text-left">Player</th>
+                <th className="w-[20%]">Team</th>
+                <th className="w-[10%]">Level</th>
+                <th className="w-[20%]">Department</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="">
+              {players.map((player) => (
+                <tr key={player.username} className="h-[50px]">
+                  <td className="w-[35%]">
+                    <p
+                      className="text-[#0268d6]"
+                      onClick={() => router.push(`/players/${player.username}`)}
+                    >
+                      {player.firstname} {player.lastname}
+                    </p>
+                  </td>
+                  <td className="w-[20%]">
+                    <p>{player.team}</p>
+                  </td>
+                  <td className="w-[10%]">
+                    <p>{player.level}</p>
+                  </td>
+                  <td className="w-[20%]">
+                    <p>{player.department}</p>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );

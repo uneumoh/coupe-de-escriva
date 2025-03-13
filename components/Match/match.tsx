@@ -4,13 +4,12 @@ import Container from "../Container";
 import firebase from "@/firebase/clientApp";
 import {
   collection,
-  CollectionReference,
   deleteDoc,
   doc,
-  DocumentData,
   getDoc,
   getDocs,
   getFirestore,
+  increment,
   limit,
   onSnapshot,
   orderBy,
@@ -20,13 +19,8 @@ import {
 } from "firebase/firestore";
 import MatchOverlay from "./MatchOverlay";
 
-import {
-  Player,
-  PlayerStatsType,
-  MatchEvents,
-  GameSettingsType,
-  Props,
-} from "@/app/types/match";
+import { Player, PlayerStatsType, MatchEvents, Props } from "@/app/types/match";
+import EndQuarter from "./EndQuarter";
 
 const db = getFirestore(firebase);
 
@@ -37,8 +31,12 @@ const Match = ({
   onFieldTeam2,
   team1Players,
   team2Players,
+  setOnfieldTeam1,
+  setOnfieldTeam2,
   gameSettings,
 }: Props) => {
+  const [quarter, setQuarter] = useState(1);
+  const [endQuarterModal, setEndQuarterModal] = useState(false);
   const [playerStats, setPlayerStats] = useState<PlayerStatsType[]>([]);
   const [matchScores, setMatchScores] = useState({
     team1Score: 0,
@@ -80,10 +78,12 @@ const Match = ({
   ) => {
     const docId = `${team1}-${team2}-${gameSettings.gametype}`;
     const statsRef = doc(db, "games", docId, "stats", player.username);
+    const totalStatRef = doc(db, "basketballplayers", player.username);
     const stats = playerStats.find((stat) => stat.username === player.username);
 
     if (stats) {
       try {
+        //Add Game Stat
         await setDoc(
           statsRef,
           {
@@ -91,6 +91,15 @@ const Match = ({
           },
           { merge: true },
         );
+        //Add Total Stat
+        await setDoc(
+          totalStatRef,
+          {
+            [`totalStats.${stat}`]: (stats[stat] as number) + (number ?? 1),
+          },
+          { merge: true },
+        );
+        //Event Adders
         if (stat === "points") {
           updateMatchScore(player, number ?? 1);
           const event: MatchEvents = {
@@ -201,8 +210,10 @@ const Match = ({
       // Reverse the effects of the event
       if (Event === "1" || Event === "2" || Event === "3") {
         await reversePointsEffect(Actor, parseInt(Event));
+        await updateTotalStats(Actor, "points", -parseInt(Event));
       } else {
         await reverseOtherEffects(Actor, Event);
+        await updateTotalStats(Actor, Event, -1);
       }
 
       // Remove the last event
@@ -210,6 +221,26 @@ const Match = ({
       console.log(`Last event with ID ${eventId} has been undone.`);
     } catch (error) {
       console.error("Error undoing last event:", error);
+    }
+  };
+
+  const updateTotalStats = async (
+    username: string,
+    stat: keyof PlayerStatsType,
+    amount: number,
+  ) => {
+    const totalStatRef = doc(db, "basketballplayers", username);
+
+    try {
+      await setDoc(
+        totalStatRef,
+        {
+          [`totalStats.${stat}`]: increment(amount),
+        },
+        { merge: true },
+      );
+    } catch (error) {
+      console.error(`Error updating total stats for ${username}:`, error);
     }
   };
 
@@ -327,15 +358,18 @@ const Match = ({
     });
   };
 
-  useEffect(() => {
-    createGameDocument();
-    const unsubscribeStats = subscribeToStats();
-    const unsubscribeScores = subscribeToScores();
-    return () => {
-      unsubscribeStats();
-      unsubscribeScores();
-    };
-  }, []);
+  const endQuarter = () => {
+    if (quarter === 4) {
+      endGame();
+      return;
+    }
+    setQuarter((prev) => prev + 1);
+    setEndQuarterModal(false);
+  };
+
+  const endGame = () => {
+    console.log();
+  };
 
   const renderPlayerRows = (players: Player[]) => {
     return players.map((player) => {
@@ -351,19 +385,30 @@ const Match = ({
             setSelectedPlayerStats(stats || null);
           }}
         >
-          <td>{`${player.firstname} ${player.lastname}`}</td>
-          <td>{stats?.points || 0}</td>
-          <td>{stats?.rebounds || 0}</td>
-          <td>{stats?.assists || 0}</td>
-          <td>{stats?.steals || 0}</td>
-          <td>{stats?.blocks || 0}</td>
+          <td className="w-[40%]">{`${player.firstname} ${player.lastname}`}</td>
+          <td className="w-[12%] text-center">{stats?.points || 0}</td>
+          <td className="w-[12%] text-center">{stats?.rebounds || 0}</td>
+          <td className="w-[12%] text-center">{stats?.assists || 0}</td>
+          <td className="w-[12%] text-center">{stats?.steals || 0}</td>
+          <td className="w-[12%] text-center">{stats?.blocks || 0}</td>
         </tr>
       );
     });
   };
 
+  useEffect(() => {
+    createGameDocument();
+    const unsubscribeStats = subscribeToStats();
+    const unsubscribeScores = subscribeToScores();
+    return () => {
+      unsubscribeStats();
+      unsubscribeScores();
+    };
+  }, []);
+
   return (
     <Container style={{ backgroundColor: "#0F0051" }}>
+      {endQuarterModal && <EndQuarter endQuarter={endQuarter} />}
       {playerSelected && (
         <MatchOverlay
           player={selectedPlayer}
@@ -372,6 +417,16 @@ const Match = ({
           setSelectedPlayer={setSelectedPlayer}
           setSelectedPlayerStats={setSelectedPlayerStats}
           updateStats={updateStats}
+          teamPlayers={
+            selectedPlayer?.team === team1
+              ? team1Players.filter((player) => !onFieldTeam1.includes(player))
+              : team2Players.filter(
+                  (player) => !onFieldTeam2.includes(player),
+                ) || null
+          }
+          setTeamPlayers={
+            selectedPlayer?.team === team1 ? setOnfieldTeam1 : setOnfieldTeam2
+          }
         />
       )}
       <div className="w-full">
@@ -386,29 +441,34 @@ const Match = ({
               <th className="w-[12%]">Blk</th>
             </tr>
           </thead>
-          <tbody>{renderPlayerRows(team1Players)}</tbody>
+          <tbody>{renderPlayerRows(onFieldTeam1)}</tbody>
         </table>
         <table className="mt-[10%] w-full text-white">
-          <tbody>{renderPlayerRows(team2Players)}</tbody>
+          <tbody>{renderPlayerRows(onFieldTeam2)}</tbody>
         </table>
       </div>
-      <div className="w-full text-center text-white">
+      <div className="mt-[10%] w-full text-center text-[18px] text-white">
         <p>{`${team1} vs ${team2}`}</p>
-        <p>{`Score: ${matchScores.team1Score} - ${matchScores.team2Score}`}</p>
+        <p>{`${matchScores.team1Score} - ${matchScores.team2Score}`}</p>
+        <p>Q{quarter}</p>
       </div>
       <div className="mt-[10%] flex w-full justify-center">
         <div onClick={undoLastEvent} className="rounded-lg bg-red-500 p-2">
           <p className="">Undo</p>
         </div>
       </div>
+      <div className="mt-[5%] h-[5%] w-full pl-[25%]">
+        <button
+          className="h-full w-1/2 bg-[#FFC521]"
+          onClick={() => {
+            setEndQuarterModal(true);
+          }}
+        >
+          End Quarter
+        </button>
+      </div>
     </Container>
   );
 };
 
 export default Match;
-function addDoc(
-  eventsRef: CollectionReference<DocumentData, DocumentData>,
-  arg1: { event: MatchEvents },
-) {
-  throw new Error("Function not implemented.");
-}

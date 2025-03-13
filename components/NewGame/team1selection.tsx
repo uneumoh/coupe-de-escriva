@@ -1,5 +1,4 @@
 import React, { Dispatch, SetStateAction } from "react";
-import Container from "../Container";
 
 interface Player {
   firstname: string;
@@ -11,6 +10,7 @@ interface Player {
   team: string;
   username: string;
   jersey: string;
+  draftpick: string;
 }
 
 interface Props {

@@ -20,6 +20,7 @@ interface Player {
   team: string;
   username: string;
   jersey: string;
+  draftpick: string;
 }
 
 interface GameSettingsType {
@@ -127,6 +128,8 @@ const NewGame = () => {
             onFieldTeam1={onFieldTeam1}
             onFieldTeam2={onFieldTeam2}
             gameSettings={gameSettings}
+            setOnfieldTeam1={setOnfieldTeam1}
+            setOnfieldTeam2={setOnfieldTeam2}
           />
         )}
       </Container>

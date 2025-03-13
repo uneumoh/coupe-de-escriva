@@ -1,16 +1,19 @@
 import Header from "@/components/Headers/header";
 import BottomNavBar from "@/components/Navigation/BottomNavBar";
-import PlayerTable from "@/components/Players/playertable";
+import Standings from "@/components/AdminTeams/Standings";
+
 import React from "react";
 
-const Players = () => {
+const AdminTeams = () => {
   return (
     <div className="flex h-screen w-screen flex-col">
       <Header />
-      <PlayerTable />
+      <div className="flex h-[80%] flex-col">
+        <Standings />
+      </div>
       <BottomNavBar />
     </div>
   );
 };
 
-export default Players;
+export default AdminTeams;

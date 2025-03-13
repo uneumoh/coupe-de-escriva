@@ -1,19 +1,17 @@
 import Header from "@/components/Headers/header";
-import Navbar from "@/components/Navigation/navbar";
-import Standings from "@/components/standings";
+import BottomNavBar from "@/components/Navigation/BottomNavBar";
+import Standings from "@/components/Teams/standings";
 
 import React from "react";
 
 const Teams = () => {
   return (
-    <div className="flex flex-1 flex-col">
+    <div className="flex h-screen w-screen flex-col">
       <Header />
-      <div className="flex flex-1 flex-row">
-        <Navbar />
-        <div className="flex h-full w-[92%] flex-col">
-          <Standings />
-        </div>
+      <div className="flex h-[80%] flex-col">
+        <Standings />
       </div>
+      <BottomNavBar />
     </div>
   );
 };

@@ -20,6 +20,7 @@ const Games = () => {
       <Container
         style={{
           display: "flex",
+          flexDirection: "column",
           justifyContent: "center",
           alignItems: "center",
           paddingLeft: "5%",
@@ -36,6 +37,14 @@ const Games = () => {
           <div className="flex h-[15%] w-[90%] cursor-pointer flex-row items-center justify-center bg-[#FFC521]">
             <p>View Games</p>
           </div>
+        </div>
+        <div className="mt-[5%] flex h-[5%] w-full flex-row justify-center">
+          <button
+            className="h-full w-[20%] bg-red-500"
+            onClick={() => router.push("/admin")}
+          >
+            Back
+          </button>
         </div>
       </Container>
     </div>

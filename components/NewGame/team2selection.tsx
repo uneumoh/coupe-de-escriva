@@ -10,6 +10,7 @@ interface Player {
   team: string;
   username: string;
   jersey: string;
+  draftpick: string;
 }
 
 interface Props {

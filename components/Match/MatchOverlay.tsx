@@ -1,6 +1,7 @@
-import React, { Dispatch, SetStateAction } from "react";
+import React, { Dispatch, SetStateAction, useState } from "react";
 import StatButton from "./StatButton";
 import { Player, PlayerStatsType } from "@/app/types/match";
+import Substitution from "./Substitution";
 
 interface Props {
   player: Player | null;
@@ -13,6 +14,8 @@ interface Props {
     stat: keyof PlayerStatsType,
     number?: number,
   ) => void;
+  teamPlayers: Player[];
+  setTeamPlayers: Dispatch<SetStateAction<Player[]>>;
 }
 
 const MatchOverlay = ({
@@ -22,12 +25,16 @@ const MatchOverlay = ({
   setSelectedPlayer,
   setSelectedPlayerStats,
   updateStats,
+  teamPlayers,
+  setTeamPlayers,
 }: Props) => {
   const closeOverlay = () => {
     setPlayerSelected(false);
     setSelectedPlayer(null);
     setSelectedPlayerStats(null);
   };
+
+  const [subOverlay, setSubOverlay] = useState(false);
 
   return (
     <div className="absolute left-0 top-0 z-50 h-full w-full bg-black bg-opacity-50">
@@ -48,6 +55,24 @@ const MatchOverlay = ({
               {player?.firstname} {player?.lastname[0]}.
             </p>
           </div>
+          <div className="h-[10%] w-full">
+            <button
+              onClick={() => {
+                setSubOverlay(true);
+              }}
+            >
+              Substitution
+            </button>
+          </div>
+          {subOverlay && (
+            <Substitution
+              teamPlayers={teamPlayers}
+              setTeamPlayers={setTeamPlayers}
+              setSubOverlay={setSubOverlay}
+              selectedPlayer={player}
+              setMatchOverlay={setPlayerSelected}
+            />
+          )}
           {stats && (
             <div className="flex flex-row items-center justify-evenly">
               <div className="flex flex-col items-center">

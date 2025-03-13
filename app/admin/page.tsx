@@ -33,7 +33,10 @@ const AdminPage = () => {
           >
             <p className="text-[36px] font-bold text-white">Games</p>
           </div>
-          <div className="flex items-center justify-center bg-[#0F0050] hover:bg-[#FFC521]">
+          <div
+            className="flex items-center justify-center bg-[#0F0050] hover:bg-[#FFC521]"
+            onClick={() => router.push("/admin/teams")}
+          >
             <p className="text-[36px] font-bold text-white"> Teams</p>
           </div>
           <div className="flex items-center justify-center bg-[#0F0050] hover:bg-[#FFC521]">
