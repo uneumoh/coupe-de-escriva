@@ -47,30 +47,6 @@ const Match = ({
   const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
   const [playerSelected, setPlayerSelected] = useState(false);
 
-  const initializeStats = async (players: Player[]) => {
-    const docId = `${team1}-${team2}-${gameSettings.gametype}`;
-    const statsPromises = players.map(async (player) => {
-      const statsRef = doc(db, "games", docId, "stats", player.username);
-      const defaultStats = {
-        points: 0,
-        assists: 0,
-        rebounds: 0,
-        steals: 0,
-        blocks: 0,
-        fouls: 0,
-      };
-      try {
-        await setDoc(statsRef, defaultStats, { merge: true });
-      } catch (error) {
-        console.error(
-          `Error initializing stats for ${player.username}:`,
-          error,
-        );
-      }
-    });
-    await Promise.all(statsPromises);
-  };
-
   const updateStats = async (
     player: Player,
     stat: keyof PlayerStatsType,
@@ -311,53 +287,6 @@ const Match = ({
     return date.toISOString().split("T")[0];
   };
 
-  const createGameDocument = async () => {
-    const docId = `${team1}-${team2}-${gameSettings.gametype}`;
-    const gameRef = doc(db, "games", docId);
-    try {
-      const gameSnap = await getDoc(gameRef);
-      if (!gameSnap.exists()) {
-        await setDoc(gameRef, {
-          Team1: team1,
-          Team2: team2,
-          team1Score: 0,
-          team2Score: 0,
-          Date: currentDate(),
-        });
-        await initializeStats([...team1Players, ...team2Players]);
-        console.log("Game document created successfully");
-      }
-    } catch (error) {
-      console.error("Error creating game document:", error);
-    }
-  };
-
-  const subscribeToStats = () => {
-    const docId = `${team1}-${team2}-${gameSettings.gametype}`;
-    const statsCollectionRef = collection(db, "games", docId, "stats");
-    return onSnapshot(statsCollectionRef, (snapshot) => {
-      const updatedStats = snapshot.docs.map((doc) => ({
-        username: doc.id,
-        ...doc.data(),
-      })) as PlayerStatsType[];
-      setPlayerStats(updatedStats);
-    });
-  };
-
-  const subscribeToScores = () => {
-    const docId = `${team1}-${team2}-${gameSettings.gametype}`;
-    const gameRef = doc(db, "games", docId);
-    return onSnapshot(gameRef, (docSnap) => {
-      const data = docSnap.data();
-      if (data) {
-        setMatchScores({
-          team1Score: data.team1Score || 0,
-          team2Score: data.team2Score || 0,
-        });
-      }
-    });
-  };
-
   const endQuarter = () => {
     if (quarter === 4) {
       endGame();
@@ -397,14 +326,87 @@ const Match = ({
   };
 
   useEffect(() => {
+    const initializeStats = async (players: Player[]) => {
+      const docId = `${team1}-${team2}-${gameSettings.gametype}`;
+      const statsPromises = players.map(async (player) => {
+        const statsRef = doc(db, "games", docId, "stats", player.username);
+        const defaultStats = {
+          points: 0,
+          assists: 0,
+          rebounds: 0,
+          steals: 0,
+          blocks: 0,
+          fouls: 0,
+        };
+        try {
+          await setDoc(statsRef, defaultStats, { merge: true });
+        } catch (error) {
+          console.error(
+            `Error initializing stats for ${player.username}:`,
+            error,
+          );
+        }
+      });
+      await Promise.all(statsPromises);
+    };
+
+    const createGameDocument = async () => {
+      const docId = `${team1}-${team2}-${gameSettings.gametype}`;
+      const gameRef = doc(db, "games", docId);
+      try {
+        const gameSnap = await getDoc(gameRef);
+        if (!gameSnap.exists()) {
+          await setDoc(gameRef, {
+            Team1: team1,
+            Team2: team2,
+            team1Score: 0,
+            team2Score: 0,
+            Date: currentDate(),
+          });
+          await initializeStats([...team1Players, ...team2Players]);
+          console.log("Game document created successfully");
+        }
+      } catch (error) {
+        console.error("Error creating game document:", error);
+      }
+    };
+
+    const subscribeToStats = () => {
+      const docId = `${team1}-${team2}-${gameSettings.gametype}`;
+      const statsCollectionRef = collection(db, "games", docId, "stats");
+      return onSnapshot(statsCollectionRef, (snapshot) => {
+        const updatedStats = snapshot.docs.map((doc) => ({
+          username: doc.id,
+          ...doc.data(),
+        })) as PlayerStatsType[];
+        setPlayerStats(updatedStats);
+      });
+    };
+
+    const subscribeToScores = () => {
+      const docId = `${team1}-${team2}-${gameSettings.gametype}`;
+      const gameRef = doc(db, "games", docId);
+      return onSnapshot(gameRef, (docSnap) => {
+        const data = docSnap.data();
+        if (data) {
+          setMatchScores({
+            team1Score: data.team1Score || 0,
+            team2Score: data.team2Score || 0,
+          });
+        }
+      });
+    };
+
     createGameDocument();
+
     const unsubscribeStats = subscribeToStats();
     const unsubscribeScores = subscribeToScores();
+
     return () => {
       unsubscribeStats();
       unsubscribeScores();
     };
-  }, []);
+  }, [team1, team2, gameSettings.gametype, team1Players, team2Players]);
 
   return (
     <Container style={{ backgroundColor: "#0F0051" }}>

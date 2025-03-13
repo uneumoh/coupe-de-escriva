@@ -57,95 +57,99 @@ const MVP = () => {
     }
   };
 
-  const getMVP = () => {
-    try {
-      const gamesQuery = query(
-        collection(db, "games"),
-        orderBy("Date", "desc"),
-        limit(1),
-      );
+  useEffect(() => {
+    const getMVP = () => {
+      try {
+        const gamesQuery = query(
+          collection(db, "games"),
+          orderBy("Date", "desc"),
+          limit(1),
+        );
 
-      const unsubscribeGames = onSnapshot(gamesQuery, (gamesSnapshot) => {
-        if (!gamesSnapshot.empty) {
-          const lastGame = gamesSnapshot.docs[0];
-          const gameId = lastGame.id;
+        const unsubscribeGames = onSnapshot(gamesQuery, (gamesSnapshot) => {
+          if (!gamesSnapshot.empty) {
+            const lastGame = gamesSnapshot.docs[0];
+            const gameId = lastGame.id;
 
-          const statsQuery = query(collection(db, `games/${gameId}/stats`));
+            const statsQuery = query(collection(db, `games/${gameId}/stats`));
 
-          const unsubscribeStats = onSnapshot(statsQuery, (statsSnapshot) => {
-            let topPlayer = {
-              id: "",
-              points: 0,
-              rebounds: 0,
-              assists: 0,
-              steals: 0,
-              blocks: 0,
-              performanceScore: 0,
-            };
-            let maxScore = -1;
+            const unsubscribeStats = onSnapshot(statsQuery, (statsSnapshot) => {
+              let topPlayer = {
+                id: "",
+                points: 0,
+                rebounds: 0,
+                assists: 0,
+                steals: 0,
+                blocks: 0,
+                performanceScore: 0,
+              };
+              let maxScore = -1;
 
-            statsSnapshot.forEach((doc) => {
-              const data = doc.data();
+              statsSnapshot.forEach((doc) => {
+                const data = doc.data();
 
-              const performanceScore =
-                (data.points || 0) * 5 +
-                (data.assists || 0) * 3 +
-                (data.rebounds || 0) * 2 +
-                (data.steals || 0) * 4 +
-                (data.blocks || 0) * 4;
+                const performanceScore =
+                  (data.points || 0) * 5 +
+                  (data.assists || 0) * 3 +
+                  (data.rebounds || 0) * 2 +
+                  (data.steals || 0) * 4 +
+                  (data.blocks || 0) * 4;
 
-              if (performanceScore > maxScore) {
-                maxScore = performanceScore;
-                topPlayer = {
-                  id: doc.id,
-                  points: data.points || 0,
-                  assists: data.assists || 0,
-                  rebounds: data.rebounds || 0,
-                  steals: data.steals || 0,
-                  blocks: data.blocks || 0,
-                  performanceScore,
-                };
+                if (performanceScore > maxScore) {
+                  maxScore = performanceScore;
+                  topPlayer = {
+                    id: doc.id,
+                    points: data.points || 0,
+                    assists: data.assists || 0,
+                    rebounds: data.rebounds || 0,
+                    steals: data.steals || 0,
+                    blocks: data.blocks || 0,
+                    performanceScore,
+                  };
+                }
+              });
+
+              if (topPlayer.id) {
+                console.log("MVP Player:", topPlayer);
+                setStats(topPlayer);
+
+                // Fetch player info
+                getMVPInfo(topPlayer.id).then((playerData) => {
+                  if (playerData) {
+                    setPlayerInfo({
+                      firstname: playerData.firstname || "Unknown",
+                      lastname: playerData.lastname || "Unknown",
+                      team: playerData.team || "N/A",
+                      position: playerData.position || "N/A",
+                      level: playerData.level || "N/A",
+                      department: playerData.department || "N/A",
+                      number: playerData.number || "00",
+                    });
+                  }
+                });
+              } else {
+                console.log("No stats available for the last game.");
               }
             });
 
-            if (topPlayer.id) {
-              console.log("MVP Player:", topPlayer);
-              setStats(topPlayer);
+            return unsubscribeStats; // Return the stats unsubscribe function
+          } else {
+            console.log("No games found.");
+          }
+        });
 
-              // Fetch player info
-              getMVPInfo(topPlayer.id).then((playerData) => {
-                if (playerData) {
-                  setPlayerInfo({
-                    firstname: playerData.firstname || "Unknown",
-                    lastname: playerData.lastname || "Unknown",
-                    team: playerData.team || "N/A",
-                    position: playerData.position || "N/A",
-                    level: playerData.level || "N/A",
-                    department: playerData.department || "N/A",
-                    number: playerData.number || "00",
-                  });
-                }
-              });
-            } else {
-              console.log("No stats available for the last game.");
-            }
-          });
+        return unsubscribeGames; // Return the games unsubscribe function
+      } catch (error) {
+        console.error("Error fetching games or stats:", error);
+      }
+    };
 
-          return () => unsubscribeStats(); // Cleanup for stats listener
-        } else {
-          console.log("No games found.");
-        }
-      });
+    const unsubscribe = getMVP();
 
-      return () => unsubscribeGames(); // Cleanup for games listener
-    } catch (error) {
-      console.error("Error fetching games or stats:", error);
-    }
-  };
-
-  useEffect(() => {
-    getMVP();
-  }, []);
+    return () => {
+      if (unsubscribe) unsubscribe(); // Cleanup on unmount
+    };
+  }, [setStats, setPlayerInfo]); // Include dependencies
 
   return (
     <div className="mt-[10%] h-[60%] rounded-[5px] bg-[#0F0050]">

@@ -22,17 +22,20 @@ const EditTeamModal = ({ editTeam, setEditTeam, setEditTeamModal }: Props) => {
     position: 0,
   });
 
-  const getTeamDetails = async () => {
-    const docRef = doc(db, "teams", editTeam);
-    const data = (await getDoc(docRef).then((doc) =>
-      doc.data(),
-    )) as TeamDetails;
-    setTeamDetails(data);
-  };
-
   useEffect(() => {
+    const getTeamDetails = async () => {
+      if (!editTeam) return;
+
+      const docRef = doc(db, "teams", editTeam);
+      const docSnap = await getDoc(docRef);
+
+      if (docSnap.exists()) {
+        setTeamDetails(docSnap.data() as TeamDetails);
+      }
+    };
+
     getTeamDetails();
-  }, []);
+  }, [editTeam]);
 
   const saveEdit = (newDetails: TeamDetails) => {
     const docRef = doc(db, "teams", editTeam);

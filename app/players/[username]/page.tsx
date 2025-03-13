@@ -11,6 +11,7 @@ import {
 import React, { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import YellowHeader from "@/components/Headers/yellowHeader";
+import Image from "next/image";
 
 const db = getFirestore(firebase);
 
@@ -43,7 +44,7 @@ const PlayerModal = () => {
     const gamesSnapshot = await getDocs(gamesRef);
 
     let totalGames = 0;
-    let totalStats = {
+    const totalStats = {
       points: 0,
       assists: 0,
       rebounds: 0,
@@ -95,13 +96,15 @@ const PlayerModal = () => {
           </button>
         </div>
         <div className="flex h-1/4 w-full flex-row">
-          <div className="flex w-1/2 flex-col px-[10%]">
-            <img
-              src={`/Logos/${activePlayer?.team}.png`}
-              alt="Team Logo"
-              onError={(e) => (e.currentTarget.src = "/Logos/coupe.png")}
-              className="w-[35%]"
-            />
+          <div className="flex h-full w-1/2 flex-col px-[10%]">
+            <div className="relative h-1/4 w-1/3">
+              <Image
+                src={`/Logos/${activePlayer?.team}.png`}
+                alt="Team Logo"
+                onError={(e) => (e.currentTarget.src = "/Logos/coupe.png")}
+                fill
+              />
+            </div>
           </div>
           <div className="flex w-1/2 flex-col">
             <p className="font-bold">

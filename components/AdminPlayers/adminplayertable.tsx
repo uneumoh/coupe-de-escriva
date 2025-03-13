@@ -167,7 +167,7 @@ const AdminPlayerTable = () => {
   // Delete Player Function
   const deletePlayer = async (playerUsername: string) => {
     try {
-      const playerDocRef = doc(db, "basketballplayer", playerUsername);
+      const playerDocRef = doc(db, "basketballplayers", playerUsername);
 
       await deleteDoc(playerDocRef);
       alert("Player Successfully Deleted");
@@ -181,53 +181,21 @@ const AdminPlayerTable = () => {
     setUsername(username);
   };
 
-  const applyFilters = (
-    team: string,
-    level: string,
-    department: string,
-    name: string,
-  ) => {
-    let filteredPlayers = players;
-
-    // Apply team filter if team is not empty
-    if (team !== "") {
-      filteredPlayers = filteredPlayers.filter(
-        (player) => player.team === team,
-      );
-    }
-
-    // Apply level filter if level is not empty
-    if (level !== "") {
-      filteredPlayers = filteredPlayers.filter(
-        (player) => player.level === level,
-      );
-    }
-
-    // Apply department filter if department is not empty
-    if (department !== "") {
-      filteredPlayers = filteredPlayers.filter(
-        (player) => player.department === department,
-      );
-    }
-
-    // Apply name filter if name is not empty
-    if (name !== "") {
-      const lowercasedName = name.toLowerCase();
-      filteredPlayers = filteredPlayers.filter(
-        (player) =>
-          player.firstname.toLowerCase().includes(lowercasedName) ||
-          player.lastname.toLowerCase().includes(lowercasedName),
-      );
-    }
-
-    console.log(filteredPlayers); // Debugging: See the filtered results
-    setFilteredPlayers(filteredPlayers);
-  };
-
   // Example usage in a form or UI interaction
   useEffect(() => {
-    applyFilters(select.team, select.level, select.department, select.name);
-  }, [select.team, select.level, select.department, select.name]);
+    const filtered = players.filter((player) => {
+      return (
+        (select.team === "" || player.team === select.team) &&
+        (select.level === "" || player.level === select.level) &&
+        (select.department === "" || player.department === select.department) &&
+        (select.name === "" ||
+          player.firstname.toLowerCase().includes(select.name.toLowerCase()) ||
+          player.lastname.toLowerCase().includes(select.name.toLowerCase()))
+      );
+    });
+
+    setFilteredPlayers(filtered);
+  }, [select, players]);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
@@ -294,8 +262,7 @@ const AdminPlayerTable = () => {
                   min={0}
                   max={100}
                   onChange={(e) => {
-                    let x = +e.target.value;
-                    if (x == 100) setNumber("00");
+                    if (+e.target.value == 100) setNumber("00");
                     else setNumber(e.target.value);
                   }}
                   className="rounded border border-black"
