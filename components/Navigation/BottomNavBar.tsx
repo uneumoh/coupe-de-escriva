@@ -31,7 +31,14 @@ const BottomNavBar = () => {
         >
           Teams
         </div>
-        <div className="flex flex-1">Games</div>
+        <div
+          className="flex flex-1"
+          onClick={() => {
+            navigate.push("/games");
+          }}
+        >
+          Games
+        </div>
         <div className="flex flex-1">Settings</div>
       </div>
     </div>
