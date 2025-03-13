@@ -15,6 +15,17 @@ import Image from "next/image";
 
 const db = getFirestore(firebase);
 
+export async function generateStaticParams() {
+  const playersCollection = collection(db, "players"); // Replace with your Firestore collection name
+  const playersSnapshot = await getDocs(playersCollection);
+
+  const paths = playersSnapshot.docs.map((doc) => ({
+    username: doc.id, // Assuming username is stored as the document ID
+  }));
+
+  return paths; // Next.js will pre-render these paths
+}
+
 const PlayerModal = () => {
   const params = useParams();
   const router = useRouter();
