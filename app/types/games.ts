@@ -24,3 +24,12 @@ export interface GamesType {
   stats?: Stats[];
   events?: Events[];
 }
+
+export interface StatsType {
+  id?: string;
+  points: number;
+  assists: number;
+  rebounds: number;
+  steals: number;
+  blocks: number;
+}

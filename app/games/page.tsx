@@ -3,6 +3,8 @@ import firebase from "@/firebase/clientApp";
 import { collection, getDocs, getFirestore } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 import { GamesType } from "../types/games";
+import Header from "@/components/Headers/header";
+import BottomNavBar from "@/components/Navigation/BottomNavBar";
 
 const db = getFirestore(firebase);
 const Games = () => {
@@ -24,25 +26,33 @@ const Games = () => {
     getGames();
   }, []);
   return (
-    <div>
-      <div>
-        <table>
+    <div className="flex h-screen w-screen flex-col">
+      <Header />
+      <div className="flex h-[80%] w-full flex-col">
+        <table className="table text-center">
           <thead>
-            <tr>
-              <th>Game Name</th>
+            <tr className="bg-[#FFC521]">
+              <th>Team 1</th>
+              <th>Team 2</th>
+              <th>Score</th>
             </tr>
           </thead>
           <tbody>
             {games?.map((game) => {
               return (
                 <tr key={game.id}>
-                  <td>{game.id}</td>
+                  <td>{game.Team1}</td>
+                  <td>{game.Team2}</td>
+                  <td>
+                    {game.team1Score} - {game.team2Score}
+                  </td>
                 </tr>
               );
             })}
           </tbody>
         </table>
       </div>
+      <BottomNavBar />
     </div>
   );
 };
